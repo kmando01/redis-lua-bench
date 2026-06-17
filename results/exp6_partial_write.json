@@ -1,0 +1,11 @@
+{
+  "error": "ERR value is not a valid float script: 5efe1ac92500afd83002bd9420ddade04ae9f4bf, on @user_script:4.",
+  "experiment": "6_partial_write",
+  "key_states": {
+    "pw:key1": "written-by-lua",
+    "pw:key2": "written-by-lua",
+    "pw:key3": "(nil)"
+  },
+  "partial_write": true,
+  "rollback_occurred": false
+}

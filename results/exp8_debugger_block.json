@@ -1,0 +1,9 @@
+{
+  "baseline_max_ms": 1.273958,
+  "baseline_p99_ms": 0.7611249999999999,
+  "blocked_max_ms": 2180.828042,
+  "blocked_p99_ms": 0.326875,
+  "experiment": "8_debugger_block",
+  "method": "~2s Lua blocking (--ldb breakpoint와 동일한 이벤트 루프 점유)",
+  "p99_multiplier": 1711.852386028425
+}

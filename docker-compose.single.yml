@@ -1,0 +1,10 @@
+services:
+  redis:
+    image: redis:7.4
+    ports: ["6399:6379"]
+    command: >
+      redis-server
+      --appendonly yes
+      --slowlog-log-slower-than 1000
+      --slowlog-max-len 1000
+      --lua-time-limit 5000
