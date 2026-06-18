@@ -228,6 +228,8 @@ func main() {
 	switch os.Args[1] {
 	case "exp2":
 		runExp2(rdb)
+	case "exp2-strict":
+		runExp2Strict(rdb)
 	case "load-functions":
 		loadFunctions(rdb)
 	case "collateral":

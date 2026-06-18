@@ -1,0 +1,75 @@
+[
+  {
+    "name": "strict_eval",
+    "workers": 1000,
+    "total_ops": 10000,
+    "limit": 100,
+    "success": 100,
+    "fail": 9900,
+    "final_value": 100,
+    "accurate": true,
+    "tps": 52822.01621635898,
+    "latency_ms": {
+      "max": 39.644917,
+      "mean": 18.246044307499975,
+      "min": 4.6437919999999995,
+      "p50": 17.617625,
+      "p95": 26.895125,
+      "p99": 37.166292
+    },
+    "elapsed_ms": 189.315,
+    "variant": "eval",
+    "warmup_ops": 5000,
+    "net_in_bytes_per_op": 231.0025,
+    "net_out_bytes_per_op": 5.1736
+  },
+  {
+    "name": "strict_evalsha",
+    "workers": 1000,
+    "total_ops": 10000,
+    "limit": 100,
+    "success": 100,
+    "fail": 9900,
+    "final_value": 100,
+    "accurate": true,
+    "tps": 71962.44280110211,
+    "latency_ms": {
+      "max": 27.882,
+      "mean": 13.037868173300005,
+      "min": 2.917208,
+      "p50": 11.15925,
+      "p95": 21.805667,
+      "p99": 24.564083
+    },
+    "elapsed_ms": 138.961375,
+    "variant": "evalsha",
+    "warmup_ops": 5000,
+    "net_in_bytes_per_op": 129.0025,
+    "net_out_bytes_per_op": 5.1743,
+    "script_sha": "0b387b213ec03bba94132c2aa3a3843d8ef7a7ba"
+  },
+  {
+    "name": "strict_fcall",
+    "workers": 1000,
+    "total_ops": 10000,
+    "limit": 100,
+    "success": 100,
+    "fail": 9900,
+    "final_value": 100,
+    "accurate": true,
+    "tps": 69425.62142283618,
+    "latency_ms": {
+      "max": 39.112375,
+      "mean": 13.592425672100001,
+      "min": 2.9806670000000004,
+      "p50": 10.807208000000001,
+      "p95": 28.375125,
+      "p99": 34.999584
+    },
+    "elapsed_ms": 144.039042,
+    "variant": "fcall",
+    "warmup_ops": 5000,
+    "net_in_bytes_per_op": 95.0025,
+    "net_out_bytes_per_op": 5.1745
+  }
+]

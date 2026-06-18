@@ -325,6 +325,60 @@ Exp 5(관찰가능성)와 합산하면:
 
 ---
 
+## 후속 재검증: exp2-strict — EVAL / EVALSHA / FCALL 원인 분리
+
+> **동기**: 기존 exp2에서 Functions(FCALL)가 Lua(EVAL)보다 80% 빠르게 나왔으나
+> EVAL(매번 스크립트 전체 전송) vs EVALSHA(SHA 40자만 전송) vs FCALL 세 경로가
+> 명시적으로 분리되지 않았다. 80% 우위의 원인이
+> ① 네트워크 페이로드 절감인지 ② Functions 자체 최적화인지 미확인 상태.
+
+**설정**: workers=1,000 / warmup=5,000 ops(분리) / measure=10,000 / limit=100
+
+### 결과
+
+| variant | TPS | p50 (ms) | p99 (ms) | net_in (B/op) |
+|---------|-----|----------|----------|---------------|
+| EVAL (스크립트 매번 전송) | 52,822 | 17.62 | 37.17 | **231.0** |
+| EVALSHA (SHA 40자 전송) | **71,962** | 11.16 | 24.56 | **129.0** |
+| FCALL (Functions) | 69,426 | 10.81 | 35.00 | **95.0** |
+
+### 원인 분리
+
+```
+EVAL → EVALSHA: TPS +36.2%,  네트워크 44.2% 감소 (231 → 129 B/op)
+EVALSHA → FCALL: TPS -3.5%,  네트워크 26.4% 감소 (129 → 95 B/op)
+```
+
+### 수정된 결론
+
+| 구분 | 기존 결론 | 수정된 결론 |
+|------|----------|------------|
+| Functions TPS 우위 | "Functions가 Lua보다 80% 빠름" | **36% (네트워크 절감) + FCALL ≈ EVALSHA (서버 실행 동등)** |
+| 80% 우위의 원인 | Functions 자체 최적화 | **대부분 EVAL의 불필요한 스크립트 재전송** |
+| EVALSHA vs FCALL | 비교 없음 | **EVALSHA가 FCALL보다 오히려 3.5% 빠름** |
+
+**핵심**: 기존 exp2의 Lua(26K)는 go-redis Script 헬퍼가 워밍업 없이 첫 호출마다
+NOSCRIPT 폴백을 겪었기 때문에 낮게 나온 것. 워밍업 분리 + EVALSHA 명시 시
+52K(EVAL) / 72K(EVALSHA)로 Functions(69K)와 사실상 동등.
+
+**Functions의 실제 장점**: TPS가 아닌 **운영성** (SCRIPT FLUSH 무관, Failover 후 NOSCRIPT 없음,
+함수명 SLOWLOG 노출, FUNCTION LIST WITHCODE 버전 관리) — 실험 5 결론 유지.
+
+### 증거 강도 업데이트
+
+| 증거 | 강도 | 핵심 수치 |
+|------|------|-----------|
+| Functions TPS 우위 (수정) | ★★★★☆ | EVALSHA 72K ≈ FCALL 69K, EVAL 53K이 병목 |
+| 네트워크 페이로드가 TPS를 결정 | ★★★★★ | 231B/op(EVAL) → 129B/op(EVALSHA) → +36% TPS |
+
+### 재현
+
+```bash
+cd go-bench && ./go-bench load-functions && ./go-bench exp2-strict
+```
+
+---
+
 ## 재현 명령
 
 ```bash
